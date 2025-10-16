@@ -3,38 +3,70 @@ from agno.models.openai import OpenAIChat
 from agno.db.sqlite import SqliteDb
 from dotenv import load_dotenv
 
-# load keys to environment
+# load the api key to env
 load_dotenv()
 
-# define the llm
+# create the model
 llm = OpenAIChat(id="gpt-4.1-mini")
 
-# build the db
+# add user id
+user_id = "user1"
+
+# create a database
 db = SqliteDb(db_file="demo.db")
 
-# add custom session id and user id
-session_id = "session_2"
-user_id = "himanshu"
-
-# define the agent
+# create the agent
 agent = Agent(
-    name="agent_with_memory",
-    db=db,
     model=llm,
-    session_id=session_id,
-    user_id=user_id,
-    stream=True,
-    markdown=True,
+    db=db,
+    name="agent_with_memory",
     add_history_to_context=True,
-    num_history_runs=3
+    num_history_runs=5,
+    stream=True,
+    markdown=True
 )
 
-# chat with the agent
-agent.print_response("hi my name is Himanshu")
+# create sessions
+session_transformer = "session_transformer"
+session_rag = "session_rag"
 
-agent.print_response("Can you tell me my name?")
+# # conversation 1 --> session_id=session_transformer
+# agent.print_response("hi, can you tell me about transformer architecture in 100 words, make it simple", session_id=session_transformer)
 
-messages = agent.get_chat_history(session_id=session_id)
+# agent.print_response("what is self attention. explain in a single paragraph.", session_id=session_transformer)
 
-for message in messages:
-    print(f"Role: {message.role}, Content: {message.content}")
+# agent.print_response("what is this conversation all about?", session_id=session_transformer)
+
+
+# # conversation 2 --> session_id=session_rag
+# agent.print_response("what is the role of RAG in AI. explain in 100 words",session_id=session_rag)
+
+# agent.print_response("What does RAG stands for?",session_id=session_rag)
+
+# agent.print_response("What is this conversation all about?",session_id=session_rag)
+
+agent.print_response(input="can you list down the advantages of RAG you talked about earlier. Only list down from previous chat", session_id=session_rag)
+
+print()
+print()
+
+print("============ Tranformer Messages =================")
+messages_1 = agent.get_chat_history(session_transformer)
+
+for message in messages_1:
+    role, content = message.role, message.content
+    if role == "system":
+        continue
+    else:
+        print(f"Role: {role}, Message: \n{content}")
+        
+print("\n\n============ RAG Messages =================")
+messages_2 = agent.get_chat_history(session_rag)
+
+for message in messages_2:
+    role, content = message.role, message.content
+    if role == "system":
+        continue
+    else:
+        print(f"Role: {role}, Message: \n{content}")
+        

@@ -1,24 +1,51 @@
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
+from agno.db.json import JsonDb
 from dotenv import load_dotenv
 
-# load keys to environment
+# load the api key to env
 load_dotenv()
 
-# define the llm
+# create the model
 llm = OpenAIChat(id="gpt-4.1-mini")
 
-# define the agent
+# add session id
+session_id = "session_1"
+
+# create a database
+db = JsonDb(db_path="chat_history_db",
+            session_table="session_history")
+
+# create the agent
 agent = Agent(
-    name="agent_with_memory",
     model=llm,
-    stream=True,
-    markdown=True,
+    db=db,
+    name="agent_with_memory",
+    session_id=session_id,
     add_history_to_context=True,
-    num_history_runs=3
+    num_history_runs=10,
+    stream=True,
+    markdown=True
 )
 
-# chat with the agent
-agent.print_response("hi my name is Himanshu")
+# # give inputs to the agent
+agent.print_response(input="Hi, my name is Himanshu")
 
-agent.print_response("Can you tell me my name?")
+# agent.print_response(input="Can you tell me my name?")
+
+agent.print_response(input="tell me a joke that is funny")
+
+agent.print_response(input="generate a paragraph on Gen AI")
+
+agent.print_response(input="Can you tell me my name?")
+
+# print(agent.session_id)
+
+messages = agent.get_chat_history(session_id)
+
+for message in messages:
+    role, content = message.role, message.content
+    if role == "system":
+        continue
+    else:
+        print(f"Role: {role}, Message: {content}")

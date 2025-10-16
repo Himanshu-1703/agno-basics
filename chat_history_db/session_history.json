@@ -1,0 +1,94 @@
+[
+  {
+    "session_id": "session_1",
+    "agent_id": "agent-with-memory",
+    "team_id": null,
+    "user_id": null,
+    "workflow_id": null,
+    "session_data": {
+      "session_state": {},
+      "session_metrics": {
+        "input_tokens": 136,
+        "output_tokens": 176,
+        "total_tokens": 312,
+        "audio_input_tokens": 0,
+        "audio_output_tokens": 0,
+        "audio_total_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0,
+        "timer": null,
+        "time_to_first_token": null,
+        "duration": 12.446685400000206,
+        "provider_metrics": null,
+        "additional_metrics": null
+      }
+    },
+    "metadata": null,
+    "agent_data": {
+      "name": "agent_with_memory",
+      "agent_id": "agent-with-memory",
+      "model": {
+        "name": "OpenAIChat",
+        "id": "gpt-4.1-mini",
+        "provider": "OpenAI"
+      }
+    },
+    "runs": [
+      {
+        "run_id": "660042c4-1ba0-480e-bbad-851c1f8e3c35",
+        "agent_id": "agent-with-memory",
+        "agent_name": "agent_with_memory",
+        "session_id": "session_1",
+        "content": "I don't have access to personal information about you unless you share it with me. If you'd like, you can tell me your name!",
+        "content_type": "str",
+        "model": "gpt-4.1-mini",
+        "model_provider": "OpenAI",
+        "metrics": {
+          "input_tokens": 34,
+          "output_tokens": 27,
+          "total_tokens": 61,
+          "time_to_first_token": 0.0006316999997579842,
+          "duration": 1.9109831999999187
+        },
+        "created_at": 1760615476,
+        "status": "COMPLETED",
+        "messages": [
+          {
+            "content": "<additional_information>\n- Use markdown to format your answers.\n</additional_information>",
+            "from_history": false,
+            "stop_after_tool_call": false,
+            "role": "system",
+            "created_at": 1760615476
+          },
+          {
+            "content": "Can you tell me my name?",
+            "from_history": false,
+            "stop_after_tool_call": false,
+            "role": "user",
+            "created_at": 1760615476
+          },
+          {
+            "content": "I don't have access to personal information about you unless you share it with me. If you'd like, you can tell me your name!",
+            "from_history": false,
+            "stop_after_tool_call": false,
+            "role": "assistant",
+            "metrics": {
+              "input_tokens": 34,
+              "output_tokens": 27,
+              "total_tokens": 61
+            },
+            "created_at": 1760615476
+          }
+        ],
+        "input": {
+          "input_content": "Can you tell me my name?"
+        }
+      }
+    ],
+    "summary": null,
+    "created_at": 1760615460,
+    "updated_at": 1760615478,
+    "session_type": "agent"
+  }
+]
