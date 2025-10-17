@@ -1,6 +1,8 @@
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.db.sqlite import SqliteDb
+from textwrap import dedent
+from agno.tools.duckduckgo import DuckDuckGoTools
 from dotenv import load_dotenv
 
 # load keys to environment
@@ -12,27 +14,36 @@ llm = OpenAIChat(id="gpt-4.1-mini")
 # create a database
 db = SqliteDb(db_file="chat_history.db")
 
-def add_topic_name(session_state: dict, topic: str) -> str:
-    """Add topic name to the state"""
-    session_state["topic"].append(topic)
-    return f"topic: {topic} added to session state"
+# create tool for web_search
+web_search = DuckDuckGoTools()
 
-def add_word_count(session_state: dict, num_words: str) -> str:
-    """Add word count to the state"""
-    session_state["word_count"].append(num_words)
-    return f"State updated"
-
+def add_key_point(session_state: dict, point: str) -> str:
+    """tool to add key points to the session state"""
+    # fetch the list
+    points_list = session_state["key_points"]
+    # add point to the points list
+    points_list.append(point)
+    
+    return f"Point: {point} added to the session state"
+    
 
 # build the agent
 agent = Agent(
     name="my_agent",
     model=llm,
     db=db,
-    session_id="session_1",
+    session_id="session_2",
     user_id="user1",
-    session_state={"topic": [], "word_count": []},
-    tools=[add_topic_name, add_word_count],
-    instructions="You are a helpful assistant that can write summaries on various topics. You can use the tools to set the topic and word count for the summary in the session state. Make sure to follow the user's instructions carefully. You have access to tools that can help you manage the session state. Topic: {topic} Word Count: {word_count}",
+    session_state={"key_points": []},
+    tools=[add_key_point, web_search],
+    instructions=dedent("""
+                you are an expert assistant. your task is to:
+                1. Create summary on the topic and stick to the word count if provided.
+                2. You have the capability to access the web using web search tool. try to generate summary with the latest information.
+                3. You have access to a tool called as 'add_key_point' which adds a key_point from the summary to the session state.
+                4. Add key point only when asked for.
+                5. The summary created should include both advantages and disadvantages.
+                """),
     add_history_to_context=True,
     num_history_runs=5,
     add_session_state_to_context=True,
@@ -40,8 +51,13 @@ agent = Agent(
     stream=True,
 )
 
-agent.print_response("Write a 100 word summary on the topic: 'Current Scenario of Gen AI in the world' with a catchy title.")
+agent.print_response("Write a 300 word summary on the topic: 'AI Agents and its future'. Use the latest information to generate the response.")
+
+agent.print_response("add key points from the summary generated above. The number of points depends on the summary")
 
 agent.print_response("What topic are we talking about?")
 
-print("Session State:", agent.get_session_state("session_1"))
+agent.print_response("List down the key points from the recent summary generated for me in proper format")
+
+print(agent.get_session_state("session_2"))
+
